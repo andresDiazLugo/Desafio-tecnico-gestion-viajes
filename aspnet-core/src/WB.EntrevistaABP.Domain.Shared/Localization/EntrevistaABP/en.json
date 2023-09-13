@@ -1,0 +1,57 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Menu:Home": "Home",
+    "Welcome": "Bienvenido",
+    "LongWelcomeMessage": "Bienvenido a la Aplicacion de Viajes",
+    "Menu:EntrevistaABP": "Entrevista ABP",
+
+    "Menu:Pasajeros": "Pasajeros",
+    "Actions": "Actions",
+    "Close": "Close",
+    "Delete": "Delete",
+    "Edit": "Edit",
+    "Fecha_de_nacimiento": "Fecha_de_nacimiento",
+    "NewPasajero": "Agregar Pasajero",
+    "Nombre": "Nombre",
+    "Apellido": "Apellido",
+    "DNI": "DNI",
+    "CreationTime": "Creation time",
+    "AreYouSure": "Estás Seguro?",
+    "AreYouSureToDelete": "Estás seguro que quieres eliminar este item?",
+    
+    "EntrevistaABP:00001": "El pasajero con el DNI: {DNI} ingresesado ya existe",
+    "EntrevistaABP:00002":"{Error} No se puede agregar un pasajero que ya existe al viaje",
+    "EntrevistaABP:00003":"{DeleteViaje}",
+    "EntrevistaABP:00004":"El correo {EMAIL} ingresado ya esta registrado",
+    
+    "Menu:Viajes":"Viajes",
+    "Fecha_de_salida": "Fecha de salida",
+    "Fecha_de_llegada": "Fecha de llegada",
+    "Origen": "Origen de viaje",
+    "Destino": "Destino de viaje",
+    "Medio_transporte": "Medio de transport",
+    "NewViaje": "Agregar viaje",
+    "Enum:ViajeType.0": "Colectivo",
+    "Enum:ViajeType.1": "Avion",
+    "Enum:ViajeType.2": "Automovil",
+    
+    "Menu:Reservas":"Reservas",
+
+    "Permission:EntrevistaABP": "Gestion Viajes",
+    "Permission:Pasajeros": "Pasajeros Management",
+    "Permission:Pasajeros.Create": "Creating new Pasajeros",
+    "Permission:Pasajeros.Edit": "Editing the Pasajeros",
+    "Permission:Pasajeros.Delete": "Deleting the Pasajeros",
+
+    "Permission:Viajes": "Viajes Management",
+    "Permission:Viajes.Create": "Creating new viajes",
+    "Permission:Viajes.Edit": "Editing the viajes",
+    "Permission:Viajes.Delete": "Deleting the viajes",
+
+    "Permission:Reservas": "Reservas Management",
+    "Permission:Reservas.Create": "Creating new reservas",
+    "Permission:Reservas.Edit": "Editing the reservas",
+    "Permission:Reservas.Delete": "Deleting the reservas"
+  }
+}

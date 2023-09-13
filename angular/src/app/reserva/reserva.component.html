@@ -1,0 +1,123 @@
+<div class="card">
+    <div class="card-header  bg-primary text-white">
+      <div class="row">
+        <div class="col col-md-6">
+          <h5 class="card-title">
+            {{ '::Menu:Reservas' | abpLocalization }}
+          </h5>
+        </div>
+        <div class="text-end col col-md-6">
+          <div class="text-lg-end pt-2">
+            <button *abpPermission="'EntrevistaABP.Reservas.Create'" id="create" class="btn btn-success" type="button" (click)="createReserva()">
+              <i class="fa fa-plus me-1"></i>
+              <span>{{ '::NewReserva' | abpLocalization }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+        <ngx-datatable [rows]="reservas.items" [count]="reservas.totalCount" [list]="list" default>
+            <ngx-datatable-column [name]="'Coordinador'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <!-- Verifica si la propiedad 'coordinador' es verdadera -->
+                  <ng-container *ngIf="row.coordinador; else pasajeroTemplate">
+                    Coordinador
+                  </ng-container>
+                  
+                  <!-- Template alternativo para cuando 'coordinador' es falso -->
+                  <ng-template #pasajeroTemplate>
+                    Pasajero
+                  </ng-template>
+                </ng-template>
+              </ngx-datatable-column>
+          <ngx-datatable-column [name]="'::fecha_de_salida' | abpLocalization" prop="fecha_de_salida">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.viaje.fecha_de_salida | date}}
+              </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [name]="'::fecha_de_llegada' | abpLocalization" prop="fecha_de_llegada">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.viaje.fecha_de_llegada | date}}
+              </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [name]="'::origen' | abpLocalization" prop="viaje.origen"></ngx-datatable-column>
+          <ngx-datatable-column [name]="'::destino' | abpLocalization" prop="viaje.destino"></ngx-datatable-column>
+          <ngx-datatable-column [name]="'::medio_transporte' | abpLocalization" prop="medio_transporte">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ '::Enum:ViajeType.' + row.viaje.medio_transporte | abpLocalization }}
+              </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [name]="'::Nombre' | abpLocalization" prop="pasajero.nombre"></ngx-datatable-column>
+          <ngx-datatable-column [name]="'::Apellido' | abpLocalization" prop="pasajero.apellido"></ngx-datatable-column>
+          <ngx-datatable-column [name]="'::DNI' | abpLocalization" prop="pasajero.dni"></ngx-datatable-column>
+          <ngx-datatable-column [name]="'::Fecha_de_nacimiento' | abpLocalization" prop="fecha_de_nacimiento">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.pasajero.fecha_de_nacimiento | date}}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [name]="'::Acciones' | abpLocalization" prop="accion" [sortable]="false">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <button *abpPermission="'EntrevistaABP.Reservas.Edit'" class="btn btn-primary btn-sm me-1" (click)="editReserva(row.id)">
+                <i class="fa fa-edit"></i> {{ '::Editar' | abpLocalization }}
+              </button>
+              <button *abpPermission="'EntrevistaABP.Reservas.Delete'" class="btn btn-danger btn-sm" (click)="deleteReserva(row.id)">
+                <i class="fa fa-trash"></i> {{ '::Eliminar' | abpLocalization }}
+              </button>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+
+
+
+    <abp-modal [(visible)]="isModalOpen">
+        <ng-template #abpHeader>
+          <h3>{{ (selectedReserva.id ? '::Edit' : '::NewReserva') | abpLocalization }}</h3>
+        </ng-template>
+
+      
+        <ng-template #abpBody>
+          <form [formGroup]="form" (ngSubmit)="save()">
+    
+            <div class="form-group">
+              <label for="pasajero-id">Agregar Pasajero</label><span> * </span>
+              <select class="form-control" id="pasajero-id" formControlName="pasajeroId">
+                <option [ngValue]="null">Seleccione al pasajero</option>
+                <option [ngValue]="c.id" *ngFor="let c of pasajeros$ | async">
+                  {{"Nombre: "+c.nombre+", DNI: "+c.dni  }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+                <label for="viaje-id">Agregar Viaje</label><span> * </span>
+                <select class="form-control" id="viaje-id" formControlName="viajeId">
+                  <option [ngValue]="null">Seleccione el viaje</option>
+                  <option [ngValue]="v.id" *ngFor="let v of viajes$ | async">
+                    {{"Origen: "+v.origen+", Destino: "+v.destino}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <div class="custom-control custom-switch custom-control-lg">
+                  <input type="checkbox" class="custom-control-input" id="coordinador" formControlName="coordinador">
+                  <label class="custom-control-label" for="coordinador">¿Es Coordinador?</label>
+                </div>
+              </div>                  
+
+          </form>
+        </ng-template>
+      
+        <ng-template #abpFooter>
+          <button type="button" class="btn btn-secondary" abpClose>
+            {{ '::Close' | abpLocalization }}
+          </button>
+      
+          <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+            <i class="fa fa-check mr-1"></i>
+            {{ '::Save' | abpLocalization }}
+          </button>
+        </ng-template>
+      </abp-modal>

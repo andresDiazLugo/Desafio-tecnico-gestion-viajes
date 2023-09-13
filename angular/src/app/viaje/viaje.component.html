@@ -1,0 +1,146 @@
+<div class="container mt-4">
+  <div class="row justify-content-center"> 
+    <div class="col-6">
+      <div class="form-group">
+        <label for="filtro-fecha-salida">Filtrar por Fecha de Salida</label>
+        <div class="input-group">
+          <input
+            #filtroDatepicker="ngbDatepicker"
+            name="filtroDatepicker"
+            class="form-control"
+            [(ngModel)]="filterDateExit"
+            ngbDatepicker
+          />
+          <div class="input-group-append">
+            <button class="btn btn-primary" (click)="filtroDatepicker.toggle()">
+              <i class="fa fa-calendar"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary mt-2" (click)="aplicarFiltro()">
+        <i class="fa fa-filter mr-1"></i>
+        Aplicar Filtro
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+    <div class="card-header  bg-primary text-white">
+      <div class="row">
+        <div class="col col-md-6">
+          <h5 class="card-title">
+            {{ '::Menu:Viajes' | abpLocalization }}
+          </h5>
+        </div>
+        <div class="text-end col col-md-6">
+          <div class="text-lg-end pt-2">
+            <button *abpPermission="'EntrevistaABP.Viajes.Create'" id="create" class="btn btn-success" type="button" (click)="createViaje()">
+              <i class="fa fa-plus me-1"></i>
+              <span>{{ '::NewViaje' | abpLocalization }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+        <ngx-datatable [rows]="viaje.items" [count]="viaje.totalCount" [list]="list" default>
+          <ngx-datatable-column [name]="'::fecha_de_salida' | abpLocalization" prop="fecha_de_salida">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.fecha_de_salida | date}}
+              </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [name]="'::fecha_de_llegada' | abpLocalization" prop="fecha_de_llegada">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.fecha_de_llegada | date}}
+              </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [name]="'::origen' | abpLocalization" prop="origen"></ngx-datatable-column>
+          <ngx-datatable-column [name]="'::destino' | abpLocalization" prop="destino"></ngx-datatable-column>
+          <ngx-datatable-column [name]="'::medio_transporte' | abpLocalization" prop="medio_transporte">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ '::Enum:ViajeType.' + row.medio_transporte | abpLocalization }}
+              </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [name]="'::Acciones' | abpLocalization" prop="accion" [sortable]="false">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <button *abpPermission="'EntrevistaABP.Viajes.Edit'" class="btn btn-primary btn-sm me-1" (click)="editViaje(row.id)">
+                <i class="fa fa-edit"></i> {{ '::Editar' | abpLocalization }}
+              </button>
+              <button *abpPermission="'EntrevistaABP.Viajes.Delete'" class="btn btn-danger btn-sm" (click)="deleteViaje(row.id)">
+                <i class="fa fa-trash"></i> {{ '::Eliminar' | abpLocalization }}
+              </button>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+    <abp-modal [(visible)]="isModalOpen">
+        <ng-template #abpHeader>
+          <h3>{{ (selectedViaje.id ? '::Edit' : '::NewViaje') | abpLocalization }}</h3>
+        </ng-template>
+      
+        <ng-template #abpBody>
+          <form [formGroup]="form" (ngSubmit)="save()">
+            <div class="mt-2">
+              <label for="viaje-origen">Origen</label><span> * </span>
+              <input type="text" id="viaje-origen" class="form-control" formControlName="origen" autofocus />
+            </div>
+      
+            <div class="mt-2">
+              <label for="viaje-destino">Destino</label><span> * </span>
+              <input type="text" id="viaje-destino" class="form-control" formControlName="destino" autofocus />
+            </div>
+            
+            <div class="mt-2">
+              <label for="viaje-medio_transporte">Medio de transporte</label><span> * </span>
+              <select class="form-control" formControlName="medio_transporte">
+                <option value="0">Colectivo</option>
+                <option value="1">Avion</option>
+                <option value="2">Automovil</option>
+              </select>
+            </div>
+
+      
+            <div class="mt-2">
+              <label for="viaje-fecha_de_salida">Fecha de salida</label><span> * </span>
+              <input
+                #datepicker1="ngbDatepicker"
+                name="datepicker1"
+                class="form-control"
+                formControlName="fecha_de_salida"
+                ngbDatepicker
+                [minDate]="minDate"
+                [maxDate]="maxDate" 
+                (click)="datepicker1.toggle()"
+              />
+            </div>
+      
+            <div class="mt-2">
+              <label for="viaje-fecha_de_llegada">Fecha de llegada</label><span> * </span>
+              <input
+                #datepicker2="ngbDatepicker"
+                name="datepicker2"
+                class="form-control"
+                formControlName="fecha_de_llegada"
+                ngbDatepicker
+                [minDate]="minDate" 
+                [maxDate]="maxDate"
+                (click)="datepicker2.toggle()"
+              />
+            </div>
+          </form>
+        </ng-template>
+      
+        <ng-template #abpFooter>
+          <button type="button" class="btn btn-secondary" abpClose>
+            {{ '::Close' | abpLocalization }}
+          </button>
+      
+          <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+            <i class="fa fa-check mr-1"></i>
+            {{ '::Save' | abpLocalization }}
+          </button>
+        </ng-template>
+      </abp-modal>

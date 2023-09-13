@@ -1,0 +1,108 @@
+<div class="card">
+  <div class="card-header bg-primary text-white">
+    <div class="row">
+      <div class="col col-md-6">
+        <h5 class="card-title">
+          {{ '::Menu:Pasajeros' | abpLocalization }}
+        </h5>
+      </div>
+      <div class="text-end col col-md-6">
+        <div class="text-lg-end pt-2">
+          <button *abpPermission="'EntrevistaABP.Pasajeros.Create'" id="create" class="btn btn-success" type="button" (click)="createPassenger()">
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ "::NewPasajero" | abpLocalization }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <ngx-datatable [rows]="pasajero.items" [count]="pasajero.totalCount" [list]="list" default>
+      <!-- <ngx-datatable-column [name]="'::Password' " prop="password"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::UserName' " prop="username"></ngx-datatable-column> -->
+      <ngx-datatable-column [name]="'::Nombre' | abpLocalization" prop="nombre"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Apellido' | abpLocalization" prop="apellido"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::DNI' | abpLocalization" prop="dni"></ngx-datatable-column>
+      <ngx-datatable-column name="{{ 'Email' | abpLocalization }}" prop="email">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <input type="text" [value]="row.email" readonly />
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Fecha_de_nacimiento' | abpLocalization" prop="fecha_de_nacimiento">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.fecha_de_nacimiento | date}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Acciones' | abpLocalization" prop="accion" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <button *abpPermission="'EntrevistaABP.Pasajeros.Edit'" class="btn btn-primary btn-sm me-1" (click)="editPasajero(row.id)">
+            <i class="fa fa-edit"></i> {{ 'Editar' | abpLocalization }}
+          </button>
+          <button *abpPermission="'EntrevistaABP.Pasajeros.Delete'" class="btn btn-danger btn-sm" (click)="deleteRegister(row.id)">
+            <i class="fa fa-trash"></i> {{ '::Eliminar' | abpLocalization }}
+          </button>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+</div>
+
+  <!-- tratar de crear otro componente reutilizable, por ahora voy a escribir la estructura del modal para agilizar el propceso -->
+  <abp-modal [(visible)]="isModalOpen">
+    <ng-template #abpHeader>
+      <h3>{{ selectedPasajero.id ? '::Editar' : '::Nuevo Pasajero'| abpLocalization }}</h3>
+    </ng-template>
+  
+    <ng-template #abpBody>
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <div class="mt-2">
+            <label for="pasajero-name">Nombre</label><span> * </span>
+            <input type="text" id="pasajero-nombre" class="form-control" formControlName="nombre" autofocus />
+          </div>
+      
+          <div class="mt-2">
+            <label for="pasajero-apellido">Apellido</label><span> * </span>
+            <input type="text" id="pasajero-apellido" class="form-control" formControlName="apellido" />
+          </div>
+      
+          <div class="mt-2">
+            <label for="pasajero-DNI">DNI</label><span> * </span>
+            <input type="text" id="pasajero-DNI" class="form-control" formControlName="dni" />
+          </div>
+
+          <div class="mt-2">
+            <label for="pasajero-email">Email</label><span> * </span>
+            <input type="email" id="pasajero-email" readonly class="form-control" formControlName="email" />
+          </div>
+
+          <div class="mt-2">
+            <label>Fecha de nacimiento</label><span> * </span>
+            <input
+              #datepicker="ngbDatepicker"
+              class="form-control"
+              name="datepicker"
+              formControlName="fecha_de_nacimiento"
+              ngbDatepicker
+              (click)="datepicker.toggle()"
+              [minDate]="minDate"
+              [maxDate]="maxDate"
+            />
+          </div>
+        </form>
+    </ng-template>
+  
+    <ng-template #abpFooter>
+      <button type="button" class="btn btn-secondary" abpClose>
+        {{ '::Close' | abpLocalization }}
+    </button>
+  
+    <!--added save button-->
+    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+          <i class="fa fa-check mr-1"></i>
+          {{ '::Save' | abpLocalization }}
+    </button>
+    </ng-template>
+  </abp-modal>
+
+<!-- Formulario -->
+  
